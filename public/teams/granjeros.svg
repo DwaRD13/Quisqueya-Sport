@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="granBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" rx="48" fill="url(#granBg)"/>
+  <circle cx="150" cy="136" r="80" fill="#ffffff" stroke="#eab308" stroke-width="6"/>
+  <!-- Red Baseball Stitches -->
+  <path d="M98 78 Q128 136 98 194" fill="none" stroke="#dc2626" stroke-width="4" stroke-dasharray="6 4"/>
+  <path d="M202 78 Q172 136 202 194" fill="none" stroke="#dc2626" stroke-width="4" stroke-dasharray="6 4"/>
+  <text x="150" y="164" text-anchor="middle" font-family="Georgia, serif" font-size="76" font-weight="900" fill="#0f172a" stroke="#eab308" stroke-width="2">GM</text>
+  <rect x="34" y="216" width="232" height="40" rx="8" fill="#eab308" stroke="#ffffff" stroke-width="2.5"/>
+  <text x="150" y="242" text-anchor="middle" font-family="Roboto Condensed, Arial, sans-serif" font-size="21" font-weight="900" letter-spacing="2" fill="#0f172a">GRANJEROS DE MOCA</text>
+</svg>

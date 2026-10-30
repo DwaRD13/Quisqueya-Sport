@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="rdBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#002d62"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#ce1126"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" rx="48" fill="url(#rdBg)"/>
+  <!-- Dominican Flag Shield -->
+  <path d="M90 48 L210 48 L210 135 Q210 195 150 222 Q90 195 90 135 Z" fill="#ffffff" stroke="#fbbf24" stroke-width="5"/>
+  <path d="M93 51 L142 51 L142 118 L93 118 Z" fill="#002d62"/>
+  <path d="M158 51 L207 51 L207 118 L158 118 Z" fill="#ce1126"/>
+  <path d="M93 134 L142 134 L142 195 Q115 180 93 138 Z" fill="#ce1126"/>
+  <path d="M158 134 L207 134 L207 138 Q185 180 158 195 Z" fill="#002d62"/>
+  <!-- Volleyball Center -->
+  <circle cx="150" cy="126" r="28" fill="#fbbf24" stroke="#0f172a" stroke-width="3"/>
+  <path d="M126 116 Q150 105 174 116 M124 132 Q150 122 176 132 M150 98 L150 154" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <!-- Banner -->
+  <rect x="28" y="218" width="244" height="42" rx="10" fill="#ce1126" stroke="#ffffff" stroke-width="3"/>
+  <text x="150" y="245" text-anchor="middle" font-family="Roboto Condensed, Arial, sans-serif" font-size="22" font-weight="900" letter-spacing="2" fill="#ffffff">REINAS DEL CARIBE</text>
+</svg>
