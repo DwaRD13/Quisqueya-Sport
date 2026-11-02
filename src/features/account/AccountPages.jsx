@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Check, Printer } from 'lucide-react';
+import { Check, Download } from 'lucide-react';
+import Invoice from './Invoice.jsx';
 import { EmptyState, Field, Img, PageHeader, inputClass, money } from '../../shared/ui.jsx';
 import { TEAMS, getTeam } from '../../data/catalog.js';
 import { getPlan } from '../../data/plans.js';
@@ -124,12 +125,21 @@ export function OrderPage() {
   }
   const status = orderStatus(order);
   const d = order.delivery;
+  // The browser's print dialog saves the PDF; the document title becomes its file name.
+  const downloadPdf = () => {
+    const title = document.title;
+    document.title = `Factura-${order.id}`;
+    window.print();
+    document.title = title;
+  };
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-6">
+    <>
+    <Invoice order={order} />
+    <div className="mx-auto flex max-w-3xl flex-col gap-6 print:hidden">
       {params.get('nuevo') && <p role="status" className="tag self-start bg-lights text-night">¡PEDIDO CONFIRMADO! TE ENVIAMOS EL RECIBO A {order.contact.email.toUpperCase()}</p>}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div><p className="font-mono text-xs text-muted">PEDIDO</p><h1 className="font-mono text-4xl font-bold">{order.id}</h1></div>
-        <button type="button" onClick={() => window.print()} className="btn-ghost print:hidden"><Printer size={16} aria-hidden="true" /> Imprimir recibo</button>
+        <button type="button" onClick={downloadPdf} className="btn-ghost"><Download size={16} aria-hidden="true" /> Descargar factura (PDF)</button>
       </div>
       <ol className="card grid gap-2 p-5 sm:grid-flow-col" aria-label="Estado del pedido">
         {status.steps.map((s, i) => (
@@ -164,7 +174,8 @@ export function OrderPage() {
           <div className="flex justify-between text-lg font-bold"><dt>Total</dt><dd>{money(order.quote.total)}</dd></div>
         </dl>
       </div>
-      <Link to="/tienda" className="btn-primary self-start print:hidden">Seguir comprando</Link>
+      <Link to="/tienda" className="btn-primary self-start">Seguir comprando</Link>
     </div>
+    </>
   );
 }

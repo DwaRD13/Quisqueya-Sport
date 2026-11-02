@@ -41,9 +41,9 @@ export default function Layout() {
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
 
   return (
-    <div className="min-h-screen pb-24 xl:pb-0">
+    <div className="min-h-screen pb-24 xl:pb-0 print:min-h-0 print:pb-0">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-flag focus:px-4 focus:py-2">Saltar al contenido</a>
-      <header className="sticky top-0 z-40 border-b border-line bg-night/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 print:hidden border-b border-line bg-night/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-8 gap-y-3 px-4 py-3 sm:px-6">
           <Link to="/" className="font-display text-2xl font-extrabold uppercase tracking-wide">Quisqueya<span className="text-red">Sport</span></Link>
           <nav aria-label="Principal" className="hidden flex-1 gap-1 xl:flex">
@@ -64,9 +64,9 @@ export default function Layout() {
         </div>
       </header>
 
-      <main id="main" className="mx-auto max-w-7xl px-4 py-8 sm:px-6"><Outlet /></main>
+      <main id="main" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 print:max-w-none print:p-0"><Outlet /></main>
 
-      <footer className="border-t border-line">
+      <footer className="border-t border-line print:hidden">
         <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-4 py-8 text-sm text-muted sm:px-6">
           <span>© 2026 Quisqueya Sport · Datos LIDOM: <a className="underline" href={SNAPSHOT.source} target="_blank" rel="noreferrer">pelotainvernal.com</a> ({formatDay(SNAPSHOT.fetchedAt)})</span>
           <nav aria-label="Pie" className="flex flex-wrap gap-4">
@@ -77,7 +77,7 @@ export default function Layout() {
         </div>
       </footer>
 
-      <nav aria-label="Navegación móvil" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-night/95 backdrop-blur-xl xl:hidden">
+      <nav aria-label="Navegación móvil" className="print:hidden fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-night/95 backdrop-blur-xl xl:hidden">
         {MOBILE.map(({ to, label, icon: Icon, end }) => (
           <NavLink key={to} to={to} end={end} className={({ isActive }) => `flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-semibold ${isActive ? 'text-red' : 'text-muted'}`}>
             <Icon size={20} aria-hidden="true" />{label}

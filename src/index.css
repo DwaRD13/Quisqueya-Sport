@@ -25,3 +25,9 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { scrollbar-width: none; }
 }
+
+@media print {
+  @page { size: letter; margin: 14mm 14mm 16mm; }
+  html, body { background: #fff !important; color: #1A202C; }
+  .invoice { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
