@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Img, SectionHeader, Chips, money } from '../../shared/ui.jsx';
 import GameCard, { TeamLogo } from '../games/GameCard.jsx';
-import { STANDINGS, statusLabel, recentResults, todayGames, upcomingGames } from '../games/games.js';
+import { STANDINGS, statusLabel, recentResults, todayGames, nextGames } from '../games/games.js';
+import { useAuth } from '../account/auth.jsx';
 import { LEAGUES, TEAMS, getStadium, getTeam } from '../../data/catalog.js';
 import { VIDEOS, thumb } from '../../data/videos.js';
 import { CATALOG } from '../store/cart.jsx';
@@ -10,14 +11,15 @@ import ProductCard from '../store/ProductCard.jsx';
 import { TeamCard } from '../teams/TeamsPages.jsx';
 
 const TABS = [
-  { id: 'results', label: 'Resultados' },
-  { id: 'today', label: 'Hoy' },
   { id: 'next', label: 'Próximos' },
+  { id: 'today', label: 'Hoy' },
+  { id: 'results', label: 'Resultados' },
 ];
 
-function Hero() {
-  const game = todayGames()[0] ?? upcomingGames(1)[0];
+function Hero({ team }) {
+  const game = (team && nextGames({ team: team.slug, n: 1 })[0]) ?? nextGames({ n: 1 })[0];
   if (!game) return null;
+  const isFav = team && (game.away.slug === team.slug || game.home.slug === team.slug);
   const home = getTeam(game.home.slug);
   const stadium = getStadium(home?.stadium);
   const rec = (slug) => STANDINGS.find((s) => s.slug === slug);
@@ -30,7 +32,7 @@ function Hero() {
         <div className="flex max-w-xl flex-col gap-4">
           <div className="flex flex-wrap gap-2">
             <span className="tag bg-flag-deep text-flag-soft">{statusLabel(game)}</span>
-            <span className="tag bg-line">LIDOM · SERIE REGULAR</span>
+            <span className="tag bg-line">{isFav ? `TU EQUIPO · ${team.name.toUpperCase()}` : 'PRÓXIMO PARTIDO · LIDOM'}</span>
           </div>
           <h1 className="h-display text-5xl sm:text-7xl lg:text-8xl">{game.away.name}<br /><span className="text-[0.5em] text-muted">en</span> {game.home.name}</h1>
           {a && h && <p className="text-muted">{home?.name} ({h.wins}-{h.losses}) recibe a {getTeam(game.away.slug)?.name} ({a.wins}-{a.losses}){stadium ? ` en el ${stadium.name}` : ''}.</p>}
@@ -50,9 +52,16 @@ function Hero() {
 }
 
 export default function HomePage() {
-  const [tab, setTab] = useState('results');
+  const { user } = useAuth();
+  // Only LIDOM favorites have game data; other sports fall back to the general view.
+  const fav = getTeam(user?.favoriteTeam);
+  const favTeam = fav?.league === 'lidom' ? fav : null;
+  const [tab, setTab] = useState('next');
+  const [mine, setMine] = useState(true);
   const [league, setLeague] = useState('all');
-  const games = { results: recentResults(6), today: todayGames(), next: upcomingGames(6) }[tab];
+  const scope = favTeam && mine ? favTeam.slug : null;
+  const forTeam = (list) => (scope ? list.filter((g) => g.away.slug === scope || g.home.slug === scope) : list);
+  const games = { next: nextGames({ team: scope, n: 6 }), today: forTeam(todayGames()), results: forTeam(recentResults(scope ? 40 : 6)).slice(0, 6) }[tab];
   const latestVideos = [...VIDEOS].sort((x, y) => y.date.localeCompare(x.date)).slice(0, 3);
   const featured = ['official-licey-jersey-2026-white', 'aguilas-cibaenas-new-era-59fifty', '2026-2027-leones-del-escogido-authentic-jersey-white-red', 'ticket-palcos-a']
     .map((id) => CATALOG.find((p) => p.id === id) ?? CATALOG.find((p) => p.id.startsWith(id))).filter(Boolean);
@@ -60,16 +69,20 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-14">
-      <Hero />
+      <Hero team={favTeam} />
 
       <div className="flex flex-wrap gap-8">
         <section className="min-w-0 flex-[999_1_560px]">
-          <SectionHeader title="Partidos" to="/partidos">
-            <Chips label="Partidos" options={TABS} value={tab} onChange={setTab} />
+          <SectionHeader title={scope ? `Partidos · ${favTeam.name}` : 'Partidos'} to={scope ? `/partidos?equipo=${scope}` : '/partidos'}>
+            <div className="flex flex-wrap gap-2">
+              <Chips label="Partidos" options={TABS} value={tab} onChange={setTab} />
+              {favTeam && <Chips label="Equipo" options={[{ id: 'mine', label: 'Mi equipo' }, { id: 'all', label: 'Todos' }]} value={mine ? 'mine' : 'all'} onChange={(id) => setMine(id === 'mine')} />}
+            </div>
           </SectionHeader>
           {games.length ? (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{games.map((g) => <GameCard key={g.id} game={g} />)}</div>
-          ) : <p className="card p-8 text-center text-muted">No hay partidos en esta vista.</p>}
+          ) : <p className="card p-8 text-center text-muted">{tab === 'today' && scope ? `${favTeam.name} no juega hoy.` : 'No hay partidos en esta vista.'}</p>}
+          {!user && <p className="mt-3 text-sm text-muted"><Link to="/registro" className="font-semibold text-flag-soft">Crea una cuenta</Link> y elige tu equipo favorito para ver primero sus partidos.</p>}
         </section>
         <aside className="card flex-[1_1_300px] self-start p-5">
           <h2 className="mb-3 font-display text-2xl font-bold uppercase">Posiciones LIDOM</h2>

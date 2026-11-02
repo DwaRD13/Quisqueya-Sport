@@ -43,3 +43,17 @@ export function statusLabel(g) {
   if (OTHER[g.status]) return OTHER[g.status];
   return dayOf(g) === TODAY ? `HOY · ${formatTime(g.date)}` : formatTime(g.date);
 }
+
+// Game times from the source are Dominican local time (UTC-4, no DST).
+export const startsAt = (g) => new Date(`${g.date.replace(' ', 'T')}-04:00`).getTime();
+const PLAYABLE = new Set(['scheduled', 'preview', 'live', 'delayed']);
+
+// Games still to be played, nearest first. A game stays listed for 4h after first pitch
+// so one in progress is not dropped. Optionally limited to one team.
+export function nextGames({ team = null, n = 6, now = Date.now() } = {}) {
+  return GAMES
+    .filter((g) => PLAYABLE.has(g.status) && startsAt(g) > now - 4 * 3600e3)
+    .filter((g) => !team || g.away.slug === team || g.home.slug === team)
+    .sort((a, b) => startsAt(a) - startsAt(b))
+    .slice(0, n);
+}
