@@ -15,7 +15,7 @@ export default function VideosPage() {
   return (
     <div>
       <PageHeader eyebrow="Resúmenes y jugadas" title="Videos">
-        <p className="max-w-2xl text-sm text-muted">Videos públicos de YouTube de medios y canales independientes. Las ligas no publican resúmenes oficiales embebibles de estos juegos.</p>
+        <p className="max-w-2xl text-sm text-muted">Solo resúmenes con imágenes reales de los partidos (transmisión de TV), publicados en YouTube por canales de los clubes y medios independientes.</p>
       </PageHeader>
       <div className="mb-6">
         <Chips label="Liga" options={LEAGUES} value={league} onChange={(id) => setParams(id === 'all' ? {} : { liga: id })} />
