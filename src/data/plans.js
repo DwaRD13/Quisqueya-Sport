@@ -1,49 +1,50 @@
+// Prices are the prototype's original figures. Streaming itself is simulated;
+// the store discount is applied for real at checkout.
 export const SUBSCRIPTION_PLANS = [
   {
     id: 'basic',
-    name: 'Plan Fanático Básico',
-    price: 'RD$ 390',
-    period: '/ mes',
-    badge: 'Estándar HD',
-    description:
-      'Ideal para seguir a tu equipo favorito desde tu celular o laptop con estadísticas en vivo.',
+    name: 'Fanático',
+    price: 390,
+    period: 'mes',
+    kind: 'subscription',
+    badge: 'Estándar',
+    description: 'Para seguir a tu equipo toda la temporada desde el celular o la computadora.',
     features: [
-      'Transmisión en vivo 1080p en 1 pantalla (Móvil / Web)',
-      'Juegos de Temporada Regular LIDOM, LNB y Liga de Verano',
-      'Centro de Estadísticas Play-by-Play en tiempo real',
-      'Acceso a compras BOPIS con fila express QR en estadios',
+      'Transmisiones LIDOM, LNB y Liga de Verano en HD (simulado)',
+      'Resultados, calendario y posiciones al día',
+      'Reservas en la tienda con retiro en el estadio',
     ],
   },
   {
     id: 'vip',
-    name: 'Plan Fanático VIP 4K + AR',
-    price: 'RD$ 790',
-    period: '/ mes',
-    badge: 'Más Popular • Ecosistema Completo',
+    name: 'Fanático VIP',
+    price: 790,
+    period: 'mes',
+    kind: 'subscription',
+    badge: 'Más popular',
     highlighted: true,
-    description:
-      'La experiencia deportiva completa en 4K HDR con Realidad Aumentada, Multicámara y descuentos en el estadio.',
+    description: 'La experiencia completa: todos los partidos y descuento automático en la tienda.',
     features: [
-      'Streaming 4K Ultra HD hasta en 4 pantallas simultáneas',
-      'Round Robin, Serie Final LIDOM y Reinas del Caribe incluidos',
-      'Modo Realidad Aumentada (AR Statcast) y Multicámara de dugout',
-      '10% de descuento automático en alimentos BOPIS y Mercancía Oficial',
-      'Entrega gratuita en tu asiento (In-Seat Delivery) en estadios aliados',
+      'Todo lo del plan Fanático',
+      'Round Robin, Serie Final y Reinas del Caribe (simulado)',
+      '10% de descuento automático en mercancía y comida',
+      'Entrega en tu asiento en estadios aliados',
     ],
   },
   {
     id: 'ppv',
-    name: 'Pase Diario / PPV (Pago Por Evento)',
-    price: 'RD$ 195',
-    period: '/ partido único',
-    badge: 'Pago Único',
-    description:
-      'Perfecto para ver un Juego 7 decisivo, un clásico Águilas vs Licey o final de Voleibol.',
+    name: 'Pase de un partido',
+    price: 195,
+    period: 'partido',
+    kind: 'pass',
+    badge: 'Pago único',
+    description: 'Acceso por 24 horas a un partido que elijas del calendario.',
     features: [
-      'Acceso inmediato por 24 horas al evento seleccionado',
-      'Incluye repetición VOD completa y momentos destacados',
-      'Estadísticas interactivas y compras BOPIS activadas',
-      'Pago rápido con tarjeta local, transferencia o billetera digital',
+      'Válido 24 horas desde la compra',
+      'Eliges el partido del calendario',
+      'Sin renovación automática',
     ],
   },
 ];
+
+export const getPlan = (id) => SUBSCRIPTION_PLANS.find((p) => p.id === id);

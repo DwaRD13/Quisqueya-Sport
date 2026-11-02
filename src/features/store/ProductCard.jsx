@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { Img, money } from '../../shared/ui.jsx';
 import { useCart } from './cart.jsx';
+import { stockOf } from '../../services/orderService.js';
 
 export default function ProductCard({ product }) {
   const cart = useCart();
@@ -24,7 +25,7 @@ export default function ProductCard({ product }) {
         <Link to={`/tienda/${product.id}`} className="line-clamp-2 font-semibold hover:text-flag-soft">{product.name}</Link>
         <div className="mt-auto flex items-center justify-between gap-2">
           <span className="font-mono font-bold">{money(product.price)}</span>
-          {!product.inStock ? (
+          {!product.inStock || stockOf(product) <= 0 ? (
             <span className="text-xs font-semibold text-muted">Agotado</span>
           ) : needsSize ? (
             <Link to={`/tienda/${product.id}`} className="inline-flex h-11 items-center rounded-full border border-edge px-4 text-sm font-semibold hover:border-muted">Elegir opción</Link>

@@ -1,58 +1,80 @@
 import { useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Check } from 'lucide-react';
-import { PageHeader } from '../../shared/ui.jsx';
-import { SUBSCRIPTION_PLANS } from '../../data/plans.js';
+import { EmptyState, Field, PageHeader, inputClass, money } from '../../shared/ui.jsx';
+import { SUBSCRIPTION_PLANS, getPlan } from '../../data/plans.js';
+import { buyPass, subscribe } from '../../services/subscriptionService.js';
+import { GAMES, TODAY, dayOf, formatDay, formatTime } from '../games/games.js';
+import { useAuth } from '../account/auth.jsx';
+import PaymentForm from '../checkout/PaymentForm.jsx';
 
-const KEY = 'qs-waitlist-v1';
-
-// Streaming plans are a product concept: there is no live billing, so the CTA joins a waitlist.
 export default function PlansPage() {
-  const [plan, setPlan] = useState(null);
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [done, setDone] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(KEY) ?? 'null'); } catch { return null; }
-  });
+  const { subscription } = useAuth();
+  return (
+    <div>
+      <PageHeader eyebrow="Suscripciones" title="Planes">
+        <p className="max-w-2xl text-sm text-muted">Las transmisiones son una demo; el descuento VIP en la tienda sí se aplica en tus compras.</p>
+      </PageHeader>
+      <div className="grid gap-5 lg:grid-cols-3">
+        {SUBSCRIPTION_PLANS.map((p) => {
+          const current = subscription?.planId === p.id;
+          return (
+            <article key={p.id} className={`card flex flex-col gap-4 p-6 ${p.highlighted ? 'ring-2 ring-red' : ''}`}>
+              <span className="tag self-start bg-line">{(current ? 'Tu plan actual' : p.badge).toUpperCase()}</span>
+              <h2 className="font-display text-3xl font-bold uppercase">{p.name}</h2>
+              <p className="font-mono text-3xl font-bold">{money(p.price)}<span className="text-sm text-muted"> / {p.period}</span></p>
+              <p className="text-sm text-muted">{p.description}</p>
+              <ul className="flex flex-col gap-2 text-sm">
+                {p.features.map((f) => <li key={f} className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-lights" aria-hidden="true" />{f}</li>)}
+              </ul>
+              {current ? (
+                <Link to="/cuenta" className="btn-ghost mt-auto">Administrar</Link>
+              ) : (
+                <Link to={`/planes/${p.id}/pagar`} className={`mt-auto ${p.highlighted ? 'btn-primary' : 'btn-ghost'}`}>{p.kind === 'pass' ? 'Comprar pase' : subscription ? 'Cambiar a este plan' : 'Suscribirme'}</Link>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
-  const submit = (e) => {
-    e.preventDefault();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setError('Escribe un correo válido.'); return; }
-    const entry = { plan, email: email.trim() };
-    try { localStorage.setItem(KEY, JSON.stringify(entry)); } catch { /* storage unavailable */ }
-    setDone(entry);
+export function PlanCheckoutPage() {
+  const { id } = useParams();
+  const plan = getPlan(id);
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const upcoming = GAMES.filter((g) => g.status === 'scheduled' && dayOf(g) >= TODAY).slice(0, 12);
+  const [gameId, setGameId] = useState(upcoming[0]?.id ?? '');
+  if (!plan) return <EmptyState title="Plan no encontrado" action={<Link to="/planes" className="btn-primary">Ver planes</Link>} />;
+
+  const onPaid = async (payment) => {
+    if (plan.kind === 'pass') await buyPass(auth.user.id, Number(gameId), payment);
+    else await subscribe(auth.user.id, plan, payment);
+    auth.refresh();
+    navigate('/cuenta', { replace: true });
   };
 
   return (
-    <div>
-      <PageHeader eyebrow="Próximamente" title="Planes">
-        <p className="max-w-2xl text-sm text-muted">Las transmisiones en vivo aún no están disponibles. Elige un plan y te avisamos cuando abra.</p>
-      </PageHeader>
-      <div className="grid gap-5 lg:grid-cols-3">
-        {SUBSCRIPTION_PLANS.map((p) => (
-          <article key={p.id} className={`card flex flex-col gap-4 p-6 ${p.highlighted ? 'ring-2 ring-red' : ''}`}>
-            <span className="tag self-start bg-line">{p.badge.toUpperCase()}</span>
-            <h2 className="font-display text-3xl font-bold uppercase">{p.name}</h2>
-            <p className="text-sm text-muted">{p.description}</p>
-            <ul className="flex flex-col gap-2 text-sm">
-              {p.features.map((f) => <li key={f} className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-lights" aria-hidden="true" />{f}</li>)}
-            </ul>
-            <button type="button" onClick={() => { setPlan(p.id); setError(''); }} aria-pressed={plan === p.id} className={`mt-auto ${plan === p.id ? 'btn-primary' : 'btn-ghost'}`}>
-              {plan === p.id ? 'Seleccionado' : 'Avisarme de este plan'}
-            </button>
-          </article>
-        ))}
+    <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-[1fr_320px]">
+      <div className="card flex flex-col gap-5 p-6">
+        <h1 className="h-display text-4xl">Pagar {plan.name}</h1>
+        {plan.kind === 'pass' && (
+          <Field label="Partido">
+            <select value={gameId} onChange={(e) => setGameId(e.target.value)} className={inputClass}>
+              {upcoming.map((g) => <option key={g.id} value={g.id}>{g.away.name} en {g.home.name} · {formatDay(g.date)} {formatTime(g.date)}</option>)}
+            </select>
+          </Field>
+        )}
+        <PaymentForm amount={plan.price} submitLabel={plan.kind === 'pass' ? 'Comprar' : 'Suscribirme por'} onPaid={onPaid} />
       </div>
-      {done ? (
-        <p role="status" className="card mt-8 p-6 text-center">Listo: te avisaremos en <b>{done.email}</b> cuando abra el plan.</p>
-      ) : plan && (
-        <form onSubmit={submit} noValidate className="card mt-8 flex flex-wrap items-end gap-3 p-6">
-          <label className="flex min-w-[240px] flex-1 flex-col gap-1 text-sm font-semibold">Correo
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={!!error} className="h-12 rounded-xl border border-edge bg-night px-3 font-normal" />
-            {error && <span className="text-xs text-red-soft">{error}</span>}
-          </label>
-          <button type="submit" className="btn-primary">Unirme a la lista</button>
-        </form>
-      )}
+      <aside className="card flex flex-col gap-3 self-start p-5 text-sm">
+        <h2 className="font-display text-2xl font-bold uppercase">{plan.name}</h2>
+        <p className="font-mono text-2xl font-bold">{money(plan.price)}<span className="text-sm text-muted"> / {plan.period}</span></p>
+        <ul className="flex flex-col gap-2">{plan.features.map((f) => <li key={f} className="flex gap-2"><Check size={14} className="mt-0.5 shrink-0 text-lights" aria-hidden="true" />{f}</li>)}</ul>
+        {plan.kind === 'subscription' && <p className="text-xs text-muted">Se renueva cada mes (simulado). Puedes cancelar en Mi cuenta.{auth.subscription ? ' Reemplaza tu plan actual.' : ''}</p>}
+      </aside>
     </div>
   );
 }

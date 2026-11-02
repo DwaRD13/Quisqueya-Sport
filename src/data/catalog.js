@@ -15,7 +15,7 @@ export const STADIUMS = [
   { id: 'quisqueya', name: 'Estadio Quisqueya Juan Marichal', city: 'Santo Domingo', league: 'lidom', teams: ['tigres-del-licey', 'leones-del-escogido'], image: `${W}5/5a/Grandstand_(Estadio_Quisqueya).jpg`, gallery: [`${W}e/ef/Estadio_Quisqueya_Juan_Marichal_(Main_Entrance).jpg`] },
   { id: 'cibao', name: 'Estadio Cibao', city: 'Santiago de los Caballeros', league: 'lidom', teams: ['aguilas-cibaenas'], image: `${W}0/07/Estadio_Cibao_Drone.jpg`, gallery: [`${W}d/d0/Estadio_Cibao.jpg`] },
   { id: 'tetelo', name: 'Estadio Tetelo Vargas', city: 'San Pedro de Macorís', league: 'lidom', teams: ['estrellas-orientales'], image: `${W}5/55/Estadio_Tetelo_Vargas.png`, gallery: [] },
-  { id: 'micheli', name: 'Estadio Francisco A. Micheli', city: 'La Romana', league: 'lidom', teams: ['toros-del-este'], image: null, gallery: [] },
+  { id: 'micheli', name: 'Estadio Francisco A. Micheli', city: 'La Romana', league: 'lidom', teams: ['toros-del-este'], image: `${W}e/ef/Dji_fly_20260126_213454_234_1769477936277_photo_optimized.jpg`, gallery: [] },
   { id: 'julian-javier', name: 'Estadio Julián Javier', city: 'San Francisco de Macorís', league: 'lidom', teams: ['gigantes-del-cibao'], image: `${W}a/a5/Estadio_Julian_Javier.jpg`, gallery: [`${W}e/e7/Manny_Ramirez_enfrentando_a_Kevin_Pucetas_en_el_Julian_Javier..JPG`] },
   { id: 'palacio-deportes', name: 'Palacio de los Deportes Virgilio Travieso Soto', city: 'Santo Domingo', league: 'lnb', teams: ['titanes'], image: null, gallery: [] },
   { id: 'palacio-voleibol', name: 'Palacio del Voleibol Ricardo Arias', city: 'Santo Domingo', league: 'voleibol', teams: ['reinas'], image: null, gallery: [] },

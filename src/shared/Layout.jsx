@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { CalendarDays, Home, PlayCircle, Search, ShoppingBag, ShoppingCart, Users } from 'lucide-react';
+import { CalendarDays, Home, PlayCircle, Search, ShoppingBag, ShoppingCart, UserRound, Users } from 'lucide-react';
+import { useAuth } from '../features/account/auth.jsx';
 import { useCart } from '../features/store/cart.jsx';
 import { SNAPSHOT, formatDay } from '../features/games/games.js';
 
@@ -35,22 +36,26 @@ function SearchBox({ className = '' }) {
 
 export default function Layout() {
   const { count } = useCart();
+  const { user } = useAuth();
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
 
   return (
-    <div className="min-h-screen pb-24 lg:pb-0">
+    <div className="min-h-screen pb-24 xl:pb-0">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-flag focus:px-4 focus:py-2">Saltar al contenido</a>
       <header className="sticky top-0 z-40 border-b border-line bg-night/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-8 gap-y-3 px-4 py-3 sm:px-6">
           <Link to="/" className="font-display text-2xl font-extrabold uppercase tracking-wide">Quisqueya<span className="text-red">Sport</span></Link>
-          <nav aria-label="Principal" className="hidden flex-1 gap-1 lg:flex">
+          <nav aria-label="Principal" className="hidden flex-1 gap-1 xl:flex">
             {NAV.map((n) => (
-              <NavLink key={n.to} to={n.to} className={({ isActive }) => `rounded-full px-3.5 py-2.5 text-sm font-semibold ${isActive ? 'bg-line text-chalk' : 'text-muted hover:text-chalk'}`}>{n.label}</NavLink>
+              <NavLink key={n.to} to={n.to} className={({ isActive }) => `rounded-full px-3 py-2.5 text-sm font-semibold ${isActive ? 'bg-line text-chalk' : 'text-muted hover:text-chalk'}`}>{n.label}</NavLink>
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-2">
-            <SearchBox className="hidden w-64 md:block" />
+            <SearchBox className="hidden w-64 md:block xl:w-44" />
+            <Link to={user ? '/cuenta' : '/ingresar'} aria-label={user ? `Mi cuenta, ${user.name}` : 'Ingresar'} className="flex h-11 items-center gap-2 rounded-full border border-edge px-3.5 text-sm font-semibold hover:border-muted">
+              <UserRound size={18} aria-hidden="true" /><span className="hidden sm:inline">{user ? user.name.split(' ')[0] : 'Ingresar'}</span>
+            </Link>
             <Link to="/carrito" aria-label={`Carrito, ${count} artículos`} className="flex h-11 min-w-11 items-center gap-1.5 rounded-full bg-red px-3.5 text-sm font-bold text-white">
               <ShoppingCart size={18} aria-hidden="true" />{count}
             </Link>
@@ -72,7 +77,7 @@ export default function Layout() {
         </div>
       </footer>
 
-      <nav aria-label="Navegación móvil" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-night/95 backdrop-blur-xl lg:hidden">
+      <nav aria-label="Navegación móvil" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-night/95 backdrop-blur-xl xl:hidden">
         {MOBILE.map(({ to, label, icon: Icon, end }) => (
           <NavLink key={to} to={to} end={end} className={({ isActive }) => `flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-semibold ${isActive ? 'text-red' : 'text-muted'}`}>
             <Icon size={20} aria-hidden="true" />{label}

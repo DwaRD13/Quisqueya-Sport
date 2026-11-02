@@ -73,3 +73,15 @@ export function PageHeader({ eyebrow, title, children }) {
 }
 
 export const money = (n) => `RD$ ${Number(n).toLocaleString('es-DO')}`;
+
+export function Field({ label, error, hint, children }) {
+  return (
+    <label className="flex flex-col gap-1 text-sm font-semibold">
+      {label}
+      {children}
+      {error ? <span className="text-xs font-normal text-red-soft">{error}</span> : hint && <span className="text-xs font-normal text-muted">{hint}</span>}
+    </label>
+  );
+}
+
+export const inputClass = 'h-12 rounded-xl border border-edge bg-night px-3 font-normal text-chalk placeholder:text-faint aria-[invalid=true]:border-red';
